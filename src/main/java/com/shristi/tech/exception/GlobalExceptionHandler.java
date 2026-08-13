@@ -1,5 +1,6 @@
 package com.shristi.tech.exception;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,5 +19,8 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		
 	}
+
+public class GlobalExceptionHandler {
+
 
 }

@@ -22,6 +22,8 @@ import com.shristi.tech.mapper.BookMapper;
 import com.shristi.tech.model.BookDTO;
 import com.shristi.tech.service.IBookService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api")
 public class BookController {
@@ -38,7 +40,7 @@ public class BookController {
 	
 	
 	@PostMapping("/create-book")
-	public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO) {
+	public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO bookDTO) {
 		BookDTO createdBook=null;
 		Book book=bookServiceInterf.createBook(bookDTO);
 		createdBook=booMapper.bookMapToBookDTO(book);
@@ -49,35 +51,28 @@ public class BookController {
 
 	@GetMapping("/books")
 	public ResponseEntity<List<BookDTO>>  getAllBooks(){
-		
-		List<BookDTO> listBooksDTO=bookServiceInterf.getAllBooks();
-		return new ResponseEntity<List<BookDTO>>(listBooksDTO,HttpStatus.OK);
+	return ResponseEntity.ok(bookServiceInterf.getAllBooks());
 		
 	}
 	
 	@GetMapping("/books/{bookId}")
 	public ResponseEntity<BookDTO> getBookById(@PathVariable("bookId") long bookId) {
-		BookDTO retrivedBook =bookServiceInterf.getBookById(bookId);
-		return new ResponseEntity<BookDTO>(retrivedBook,HttpStatus.OK);
+		return ResponseEntity.ok(bookServiceInterf.getBookById(bookId));
 		
 	}
 	@PatchMapping("/books/{id}")
-	public ResponseEntity<BookDTO> update(@RequestBody BookDTO bookDTO,@PathVariable("id")long id) {
-		
-		BookDTO updatedBook=bookServiceInterf.updateBook(bookDTO, id);
-		return new ResponseEntity<BookDTO>(updatedBook, HttpStatus.OK);
+	public ResponseEntity<BookDTO> update(@Valid @RequestBody BookDTO bookDTO,@PathVariable("id")long id) {
+		return ResponseEntity.ok(bookServiceInterf.updateBook(bookDTO, id));
 		
 	}
 	@GetMapping("/books/author")
 	public ResponseEntity<List<BookDTO>> getByAuthor(@RequestParam(required = true) String author){
-		List<BookDTO> books=bookServiceInterf.getByAuthor(author);
-		return new ResponseEntity<List<BookDTO>>(books,HttpStatus.OK);
+		return ResponseEntity.ok(bookServiceInterf.getByAuthor(author));
 		
 	}
 	@GetMapping("/books/title")
 	public ResponseEntity<List<BookDTO>> getByTitle(@RequestParam(required = true) String title){
-		 List<BookDTO> books=bookServiceInterf.getByTitle(title);
-		 return new ResponseEntity<List<BookDTO>>(books,HttpStatus.OK);
+		return ResponseEntity.ok(bookServiceInterf.getByTitle(title)); 
 		
 	}
 	@DeleteMapping("/books/{id}")

@@ -1,6 +1,6 @@
 package com.shristi.tech.mapper;
 
-import java.util.Date;
+
 
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class BookMapper {
 		book.setSummary(bookDTO.getSummary());
 		book.setIsbn(bookDTO.getIsbn());
 		book.setActive(bookDTO.isActive());
-		book.setPublishDate(new Date());
+		book.setPublishDate(bookDTO.getPublishDate());
 		
 		return book;	
 	}
@@ -33,7 +33,7 @@ public class BookMapper {
 	  bookDTO.setActive(book.isActive());
 	  bookDTO.setSummary(book.getSummary());
 	  bookDTO.setIsbn(book.getIsbn());
-	  bookDTO.setPublishDate(new Date());
+	  bookDTO.setPublishDate(book.getPublishDate());
 	  return bookDTO;
 	  }
 	 

@@ -1,99 +1,164 @@
 package com.shristi.tech.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.shristi.tech.entity.Book;
 import com.shristi.tech.exception.BookNotFoundException;
-import com.shristi.tech.repository.BookRepository;
+import com.shristi.tech.mapper.BookMapper;
+import com.shristi.tech.model.BookDTO;
+import com.shristi.tech.repository.IBookRepository;
 
 @Service
-public class BookServiceImpl implements BookServiceInterf  {
+public class BookServiceImpl implements IBookService  {
+
+	private IBookRepository bookRepository;
+	private BookMapper bookMapper;
 	
 	@Autowired
-	private BookRepository bookRepository;
-
+	public BookServiceImpl(IBookRepository bookRepository, BookMapper bookMapper) {
+		this.bookRepository=bookRepository;
+		this.bookMapper=bookMapper;
+		
+	}
 	@Override
-	public Book createBook(Book book) {
+	public Book createBook(BookDTO bookDTO) {
 		
-	Book createdBook =bookRepository.save(book);
-		
-		return createdBook ;
+		Book book=bookMapper.bookDTOMapTOBook(bookDTO);
+		Book savedBook=bookRepository.save(book);
+	
+		return savedBook;
 	}
 
 	@Override
-	public List<Book> getAllBooks() {
+	public List<BookDTO> getAllBooks() {
+		
 		List<Book> listOfBooks=bookRepository.findAll();
-		return listOfBooks;
+		List<BookDTO> listofBookDTOS= new ArrayList<>();
 		
-	}
-
-	@Override
-	public Book getBookById(long bookId) {
-		Optional<Book> book=bookRepository.findById(bookId);
-		Book retrivedBook=null;
-		if(!book.isPresent()) {
-			throw new BookNotFoundException("Book is not available with this:: "+bookId);
-		}else {
-			retrivedBook=book.get();
+		/*
+		 * List<BookDTO> bookDTOList=listOfBooks.stream() 
+		 * .map(book->Mapper.bookMapToBookDTO(book)) 
+		 * .collect(Collectors.toList());
+		 */
+		
+		for(Book book:listOfBooks) {
+			BookDTO bookDTO=bookMapper.bookMapToBookDTO(book);
+			listofBookDTOS.add(bookDTO);
 		}
-		return retrivedBook;
+		return listofBookDTOS;
 	}
 
 	@Override
-	public List<Book> getByAuthor(String author) {
+	public BookDTO getBookById(long bookId) {
 		
-		List<Book> listOfBooks =bookRepository.findByAuthor(author);
+		Optional<Book> optionalBook=bookRepository.findById(bookId);
+		BookDTO bookDTO=null;
+		if(!optionalBook.isPresent()) {
+			throw new BookNotFoundException("Book not found with that bookId ->"+bookId);
+		}
+		else {
+			Book book=optionalBook.get();
+			bookDTO=bookMapper.bookMapToBookDTO(book);
+		}
+		
+		return bookDTO;
+	}
+
+	@Override
+	public List<BookDTO> getByAuthor(String author) {
+		List<Book> booksList=bookRepository.findByAuthor(author);
+		List<BookDTO> bookDTOsList= new ArrayList<>();
+		
+		if(booksList.isEmpty()) {
+			throw new BookNotFoundException("Book are not available with that author -> "+author);
+		}
+		else {
+			
+			/*
+			 * List<BookDTO> listOfBookDTOs=booksList.stream()
+			 *  .map(book ->Mapper.bookMapToBookDTO(book)) 
+			 *  .collect(Collectors.toList());
+			 */
+			
+			for(Book book:booksList) {
+				BookDTO bookDTO=bookMapper.bookMapToBookDTO(book);
+				bookDTOsList.add(bookDTO);
+			}
+			
+		}
+		return bookDTOsList;
+	}
+
+	@Override
+	public List<BookDTO> getByTitle(String title) {
+		List<Book> listOfBooks=bookRepository.findByTitle(title);
+		List<BookDTO> listOfDTOs=new ArrayList<>();
+		BookDTO bookDTO=null;
 		if(listOfBooks.isEmpty()) {
-			throw new BookNotFoundException("Books are not available with that:: "+author);
+			throw new BookNotFoundException("Books are not found with that title -> "+title);
+		}
+		else {
+			
+			for(Book book:listOfBooks) {
+				bookDTO=bookMapper.bookMapToBookDTO(book);
+				listOfDTOs.add(bookDTO);
+			}
+			
+			/*
+			 * listOfDTOs=listOfBooks.stream() 
+			 * .map(book-> Mapper.bookMapToBookDTO(book))
+			 * .collect(Collectors.toList());
+			 */
 		}
 		
-		
-		return listOfBooks;
+		return listOfDTOs;
 	}
 
 	@Override
-	public List<Book> getByTitle(String title) {
-		List<Book> listBooks=bookRepository.findByTitle(title);
-		if(listBooks.isEmpty()) {
-			throw new BookNotFoundException("Books are not available with that ::"+title);
+	public BookDTO updateBook(BookDTO bookDTO, long bookId) {
+		
+		Optional<Book> optionalBook=bookRepository.findById(bookId);
+		BookDTO updatedBookDTO=null;
+		if(!optionalBook.isPresent()) {
+			throw new BookNotFoundException("Book is not found with that book id -> "+bookId);
 		}
-		return listBooks;
+		else {
+			
+			Book book=optionalBook.get();
+		     book.setTitle(bookDTO.getTitle());
+		     book.setAuthor(bookDTO.getAuthor());
+		     book.setActive(bookDTO.isActive());
+		     book.setIsbn(bookDTO.getIsbn());
+		     book.setPublishDate(new Date());
+		     book.setSummary(bookDTO.getSummary());
+		     
+		    updatedBookDTO = bookMapper.bookMapToBookDTO(book);
+		    }
+	
+		return updatedBookDTO;
 	}
-
 
 	@Override
 	public long deleteBook(long bookId) {
-		bookRepository.deleteById(bookId);
-		return bookId;
-	}
-
-	@Override
-	public Book updateBook(Book book, long bookId) {
 		
 		Optional<Book> optionalBook=bookRepository.findById(bookId);
-		Book updatedBook=null;
 		
 		if(!optionalBook.isPresent()) {
-			throw new BookNotFoundException("Book not with that bookId:: "+bookId);
+			throw new BookNotFoundException("Book not found with that book id -> "+bookId);
 		}
 		else {
-			updatedBook= new Book();
-			Book optBook=optionalBook.get();
-			updatedBook.setTitle(optBook.getTitle());
-			updatedBook.setAuthor(optBook.getAuthor());
-			updatedBook.setSummary(optBook.getSummary());
-			updatedBook.setPublishDate(new Date());
-			updatedBook.setIsbn(optBook.getIsbn());
-			updatedBook.setActive(optBook.isActive());
+			bookRepository.deleteById(bookId);
 		}
-			
 		
-		return updatedBook;
+		return bookId;
 	}
+	
 
 }
+ 

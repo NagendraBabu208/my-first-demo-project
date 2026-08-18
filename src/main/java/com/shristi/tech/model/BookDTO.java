@@ -1,53 +1,31 @@
-package com.shristi.tech.entity;
-
+package com.shristi.tech.model;
 
 import java.util.Date;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
 
-@Entity
-@Table(name="BookTable")
-public class Book {
+public class BookDTO {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long bookId;
-	@NotEmpty
 	private String title;
-	@NotEmpty
-	private String author;
-	
+	private String  author;
+
 	private String summary;
 	private String isbn;
 	private Date publishDate;
 	
 	private boolean active;
 	
-	public Book() {
-		// TODO Auto-generated constructor stub
+	public BookDTO() {
+		
 	}
 
-	public Book(@NotEmpty String title, @NotEmpty String author, String summary, String isbn, Date publishDate,
-			boolean active) {
-		super();
+	public BookDTO(long bookId,String title, String author, String summary, String isbn, Date publishDate, boolean active) {
+		this.bookId=bookId;
 		this.title = title;
 		this.author = author;
 		this.summary = summary;
 		this.isbn = isbn;
 		this.publishDate = publishDate;
 		this.active = active;
-	}
-
-	public long getBookId() {
-		return bookId;
-	}
-
-	public void setBookId(long bookId) {
-		this.bookId = bookId;
 	}
 
 	public String getTitle() {
@@ -97,13 +75,22 @@ public class Book {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+	public void setBookId(long bookId) {
+		this.bookId=bookId;
+	}
+
+	public long getBookId() {
+		return bookId;
+	}
 
 	@Override
 	public String toString() {
-		return "Book [bookId=" + bookId + ", title=" + title + ", author=" + author + ", summary=" + summary + ", isbn="
-				+ isbn + ", publishDate=" + publishDate + ", active=" + active + "]";
+		return "BookDTO [bookId=" + bookId + ", title=" + title + ", author=" + author + ", summary=" + summary
+				+ ", isbn=" + isbn + ", publishDate=" + publishDate + ", active=" + active + "]";
 	}
-	
-	
 
+	
+	
+	
 }

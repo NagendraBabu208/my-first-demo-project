@@ -25,6 +25,7 @@ public class BookServiceImpl implements IBookService  {
 		this.bookMapper=bookMapper;
 		
 	}
+	
 	@Override
 	public Book createBook(BookDTO bookDTO) {
 		
@@ -32,6 +33,7 @@ public class BookServiceImpl implements IBookService  {
 		Book savedBook=bookRepository.save(book);
 	
 		return savedBook;
+		
 	}
 
 	@Override
@@ -44,13 +46,7 @@ public class BookServiceImpl implements IBookService  {
 		listofBookDTOS=listOfBooks.stream()
 		.map(bookMapper::bookMapToBookDTO)
 		.collect(Collectors.toList());
-		 
-		
-		/*
-		 * for(Book book:listOfBooks) { BookDTO
-		 * bookDTO=bookMapper.bookMapToBookDTO(book); listofBookDTOS.add(bookDTO);
-		 */
-		
+	
 		return listofBookDTOS;
 	}
 
@@ -61,6 +57,7 @@ public class BookServiceImpl implements IBookService  {
 				.orElseThrow(()-> new BookNotFoundException("Book not found with that bookId ->"+bookId));
 		
 		return bookMapper.bookMapToBookDTO(book);
+		
 	}
 
 	@Override
@@ -77,12 +74,6 @@ public class BookServiceImpl implements IBookService  {
 			bookDTOsList =booksList.stream()
 			   .map(book ->bookMapper.bookMapToBookDTO(book)) 
 			   .collect(Collectors.toList());
-			 
-			
-			/*
-			 * for(Book book:booksList) { BookDTO bookDTO=bookMapper.bookMapToBookDTO(book);
-			 * bookDTOsList.add(bookDTO); }
-			 */
 			
 		}
 		return bookDTOsList;
@@ -97,13 +88,7 @@ public class BookServiceImpl implements IBookService  {
 			throw new BookNotFoundException("Books are not found with that title -> "+title);
 		}
 		else {
-			
-			/*
-			 * for(Book book:listOfBooks) { bookDTO=bookMapper.bookMapToBookDTO(book);
-			 * listOfDTOs.add(bookDTO); }
-			 */
-			
-			
+		
 			  listOfDTOs=listOfBooks.stream() 
 			  .map(book-> bookMapper.bookMapToBookDTO(book))
 			  .collect(Collectors.toList());
@@ -133,7 +118,6 @@ public class BookServiceImpl implements IBookService  {
 	
 		return updatedBookDTO;
 	}
-
 	@Override
 	public long deleteBook(long bookId) {
 		

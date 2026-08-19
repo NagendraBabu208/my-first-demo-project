@@ -76,7 +76,7 @@ public class BookController {
 		
 	}
 	@DeleteMapping("/books/{id}")
-	public ResponseEntity<Long> delete(@PathVariable("id") long id) {
+	public ResponseEntity<Long> delete(@PathVariable("id") long id) { 
 		long bookId=bookServiceInterf.deleteBook(id);
 		return new ResponseEntity<Long>(bookId, HttpStatus.OK);
 		
